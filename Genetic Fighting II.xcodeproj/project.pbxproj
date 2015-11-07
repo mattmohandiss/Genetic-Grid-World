@@ -7,12 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		087895471B9D34C300EB3510 /* Fighter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 087895461B9D34C300EB3510 /* Fighter.swift */; };
+		0883AC2D1B9FE5C4009708AF /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0883AC2C1B9FE5C4009708AF /* Network.swift */; };
+		0892C4B91BA7B1F900C14132 /* FighterAdvancedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0892C4B81BA7B1F900C14132 /* FighterAdvancedView.swift */; };
 		08A315081B9CBB2C0046DAA9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08A315071B9CBB2C0046DAA9 /* AppDelegate.swift */; };
 		08A3150A1B9CBB2C0046DAA9 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08A315091B9CBB2C0046DAA9 /* GameScene.swift */; };
-		08A3150C1B9CBB2C0046DAA9 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 08A3150B1B9CBB2C0046DAA9 /* GameScene.sks */; };
 		08A3150E1B9CBB2C0046DAA9 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 08A3150D1B9CBB2C0046DAA9 /* Images.xcassets */; };
 		08A315111B9CBB2C0046DAA9 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 08A3150F1B9CBB2C0046DAA9 /* MainMenu.xib */; };
 		08A3151D1B9CBB2C0046DAA9 /* Genetic_Fighting_IITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08A3151C1B9CBB2C0046DAA9 /* Genetic_Fighting_IITests.swift */; };
+		08A315271B9CBBD60046DAA9 /* Grid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08A315261B9CBBD60046DAA9 /* Grid.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -26,16 +29,19 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		087895461B9D34C300EB3510 /* Fighter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Fighter.swift; path = ../Fighter.swift; sourceTree = "<group>"; };
+		0883AC2C1B9FE5C4009708AF /* Network.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
+		0892C4B81BA7B1F900C14132 /* FighterAdvancedView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FighterAdvancedView.swift; sourceTree = "<group>"; };
 		08A315021B9CBB2C0046DAA9 /* Genetic Fighting II.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Genetic Fighting II.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		08A315061B9CBB2C0046DAA9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		08A315071B9CBB2C0046DAA9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		08A315091B9CBB2C0046DAA9 /* GameScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
-		08A3150B1B9CBB2C0046DAA9 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
 		08A3150D1B9CBB2C0046DAA9 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		08A315101B9CBB2C0046DAA9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		08A315161B9CBB2C0046DAA9 /* Genetic Fighting IITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Genetic Fighting IITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		08A3151B1B9CBB2C0046DAA9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		08A3151C1B9CBB2C0046DAA9 /* Genetic_Fighting_IITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Genetic_Fighting_IITests.swift; sourceTree = "<group>"; };
+		08A315261B9CBBD60046DAA9 /* Grid.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Grid.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,11 +83,12 @@
 		08A315041B9CBB2C0046DAA9 /* Genetic Fighting II */ = {
 			isa = PBXGroup;
 			children = (
-				08A315071B9CBB2C0046DAA9 /* AppDelegate.swift */,
+				087895461B9D34C300EB3510 /* Fighter.swift */,
+				0883AC2C1B9FE5C4009708AF /* Network.swift */,
 				08A315091B9CBB2C0046DAA9 /* GameScene.swift */,
-				08A3150B1B9CBB2C0046DAA9 /* GameScene.sks */,
-				08A3150D1B9CBB2C0046DAA9 /* Images.xcassets */,
-				08A3150F1B9CBB2C0046DAA9 /* MainMenu.xib */,
+				08A315261B9CBBD60046DAA9 /* Grid.swift */,
+				08A315071B9CBB2C0046DAA9 /* AppDelegate.swift */,
+				0892C4B81BA7B1F900C14132 /* FighterAdvancedView.swift */,
 				08A315051B9CBB2C0046DAA9 /* Supporting Files */,
 			);
 			path = "Genetic Fighting II";
@@ -90,6 +97,8 @@
 		08A315051B9CBB2C0046DAA9 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				08A3150F1B9CBB2C0046DAA9 /* MainMenu.xib */,
+				08A3150D1B9CBB2C0046DAA9 /* Images.xcassets */,
 				08A315061B9CBB2C0046DAA9 /* Info.plist */,
 			);
 			name = "Supporting Files";
@@ -156,7 +165,9 @@
 		08A314FA1B9CBB2C0046DAA9 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0640;
+				LastSwiftMigration = 0700;
+				LastSwiftUpdateCheck = 0700;
+				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = "Matthew Mohandiss";
 				TargetAttributes = {
 					08A315011B9CBB2C0046DAA9 = {
@@ -192,7 +203,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				08A3150C1B9CBB2C0046DAA9 /* GameScene.sks in Resources */,
 				08A3150E1B9CBB2C0046DAA9 /* Images.xcassets in Resources */,
 				08A315111B9CBB2C0046DAA9 /* MainMenu.xib in Resources */,
 			);
@@ -213,7 +223,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				08A3150A1B9CBB2C0046DAA9 /* GameScene.swift in Sources */,
+				087895471B9D34C300EB3510 /* Fighter.swift in Sources */,
+				0892C4B91BA7B1F900C14132 /* FighterAdvancedView.swift in Sources */,
 				08A315081B9CBB2C0046DAA9 /* AppDelegate.swift in Sources */,
+				08A315271B9CBBD60046DAA9 /* Grid.swift in Sources */,
+				0883AC2D1B9FE5C4009708AF /* Network.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -268,6 +282,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -334,6 +349,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "Genetic Fighting II/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "MatthewMohandiss.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -345,6 +361,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "Genetic Fighting II/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "MatthewMohandiss.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -364,6 +381,7 @@
 				);
 				INFOPLIST_FILE = "Genetic Fighting IITests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "MatthewMohandiss.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Genetic Fighting II.app/Contents/MacOS/Genetic Fighting II";
 			};
@@ -380,6 +398,7 @@
 				);
 				INFOPLIST_FILE = "Genetic Fighting IITests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "MatthewMohandiss.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Genetic Fighting II.app/Contents/MacOS/Genetic Fighting II";
 			};
@@ -404,6 +423,7 @@
 				08A315221B9CBB2C0046DAA9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		08A315231B9CBB2C0046DAA9 /* Build configuration list for PBXNativeTarget "Genetic Fighting IITests" */ = {
 			isa = XCConfigurationList;
@@ -412,6 +432,7 @@
 				08A315251B9CBB2C0046DAA9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
