@@ -5,6 +5,7 @@
 //  Created by Matthew Mohandiss on 9/6/15.
 //  Copyright (c) 2015 Matthew Mohandiss. All rights reserved.
 //
+// Some notes are found in FighterAdvancedView.swift
 
 import SpriteKit
 
@@ -15,6 +16,7 @@ class Fighter: SKSpriteNode {
     var id = Int()
     var moveType = "continue" //stop, rebound, or continue
     var lastFourPositions = [GridCoordinate?](count: 4, repeatedValue: nil)
+    
     func moveUp() {
         if location.y < gameGrid.rows-1 {
             gameGrid.moveFighter(self, direction: "up")
@@ -89,7 +91,7 @@ class Fighter: SKSpriteNode {
     }
     
     func getSurroundings() -> [[ObjectType]] {
-        let radius = 6 //only even numbers
+        let radius = 2 //only even numbers
         var array = [[ObjectType]](count: radius*2 + 1, repeatedValue: [ObjectType](count: radius*2 + 1, repeatedValue: ObjectType.empty))
         //let arrStart = GridCoordinate(x: location.x - radius, y: location.y - radius)
         for column in 0...(radius*2) {
@@ -132,7 +134,7 @@ class Fighter: SKSpriteNode {
         self.anchorPoint = CGPointZero
         updatePosition()
         self.name = "fighter"
-        self.brain = Network(imput: getSurroundings())
+        self.brain = Network(net1: fighter1.brain, net2: fighter2.brain)
     }
     
     required init?(coder aDecoder: NSCoder) {

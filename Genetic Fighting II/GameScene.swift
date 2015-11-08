@@ -43,6 +43,7 @@ class GameScene: SKScene {
         self.enumerateChildNodesWithName("fighter", usingBlock: { (node, stop) in
             if let fighter = node as? Fighter {
                 if fighter.containsPoint(theEvent.locationInNode(self)) {
+                    print(fighter.isStagnant())
                     let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate
                     self.selectedFighter = fighter
                     if appDelegate.secondaryWindow == nil { // dont open window if there is already one
@@ -100,7 +101,7 @@ class GameScene: SKScene {
     func spawnFighters(fighters: Fighter...) {
         for _ in 1...numFighters {
             var warrior = Fighter()
-            if fighters.count == 2{
+            if fighters.count == 2 {
                 warrior = Fighter(fighter1: fighters.first!, fighter2: fighters.last!)
             }
             gameGrid.addFighter(warrior)
@@ -137,10 +138,10 @@ class GameScene: SKScene {
         if toggleTick && (tickCount <= numTicks) && (fighters.count > 2) {
             let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate
             if appDelegate.secondaryView != nil {
-                print(appDelegate.secondaryView)
+                //print(appDelegate.secondaryView)
                 let scene = appDelegate.secondaryView!.scene as! FighterAdvancedView
                 scene.fighter = self.selectedFighter
-                scene.displayBrain()
+                scene.update()
             }
             self.enumerateChildNodesWithName("fighter") {
                 node, stop in
@@ -192,7 +193,7 @@ class GameScene: SKScene {
             }
         }
         if stagnant {
-            print("everyone i stagnant")
+            print("everyone is stagnant")
         }
             if tickCount > numTicks || stagnant {
 //                self.enumerateChildNodesWithName("fighter") {
@@ -202,9 +203,11 @@ class GameScene: SKScene {
 //                }
                 let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate
                 if appDelegate.secondaryWindow != nil {
+                    appDelegate.secondaryWindow?.releasedWhenClosed = false
                     appDelegate.secondaryWindow!.close()
-                    appDelegate.secondaryView = nil
+                    //appDelegate.secondaryView = nil
                     appDelegate.secondaryWindow = nil
+                    print(appDelegate.secondaryWindow == nil)
                 } // close advancedView window
                 nextGeneration() //end generation
             } else {
@@ -217,9 +220,12 @@ class GameScene: SKScene {
     func nextGeneration() {
         fighters.sortInPlace({ $0.fitness > $1.fitness })
         let chosenOnes = [fighters.first!, fighters[1]]
-        for fighter in fighters {
+        self.enumerateChildNodesWithName("fighter") {
+            node, stop in
+            let fighter = node as! Fighter
             self.removeFighter(fighter)
         }
+        fighters.removeAll()
         spawnFighters(chosenOnes.first!, chosenOnes.last!)
         generation++
         genText.text = "Generation \(generation)"

@@ -21,16 +21,16 @@ class Network {
     }
     
     init(net1: Network, net2: Network) {
-        self.hiddenNodes = Layer(numNodes: 15, inputsPernode: inputs.count)
+        self.hiddenNodes = Layer(numNodes: 15, inputsPernode: net1.inputs.count)
         self.outputs = Layer(numNodes: 5, inputsPernode: hiddenNodes.numNodes)
         for nodeIndex in 0...self.hiddenNodes.nodes.count-1 {
             for weightIndex in 0...self.hiddenNodes.nodes[nodeIndex].weights.count-1{
                 self.hiddenNodes.nodes[nodeIndex].weights[weightIndex] = (net1.hiddenNodes.nodes[nodeIndex].weights[weightIndex] + net2.hiddenNodes.nodes[nodeIndex].weights[weightIndex])/2
                 let mod = (Double(arc4random()) / (0xFFFFFFFF/3)) - (0xFFFFFFFF/6)
-                print(mod)
+                //print(mod)
                 if arc4random_uniform(10) == 0 {
-                self.hiddenNodes.nodes[nodeIndex].weights[weightIndex] += mod
-                    print("mutation occured")
+                //self.hiddenNodes.nodes[nodeIndex].weights[weightIndex] += mod
+                    //print("mutation occured")
                 }
             }
         }
