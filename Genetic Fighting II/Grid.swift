@@ -18,37 +18,31 @@ class Grid {
     init(columns: Int, rows: Int) {
         self.columns = columns
         self.rows = rows
-        grid = [[ObjectType]](count: columns, repeatedValue: [ObjectType](count: rows, repeatedValue: ObjectType.empty))
-
-        
+        grid = [[ObjectType]](repeating: [ObjectType](repeating: ObjectType.empty, count: rows), count: columns)
     }
     
-    func objectAt(location: GridCoordinate ) -> ObjectType {
-        return .fighter
-    }
-    
-    func addFighter(fighter: Fighter) {
+    func addFighter(_ fighter: Fighter) {
         grid[fighter.location.x][fighter.location.y] = .fighter
     }
     
-    func moveFighter(fighter: Fighter, direction: String) {
+    func moveFighter(_ fighter: Fighter, direction: String) {
         switch direction {
-            case "up":
+        case "up":
             grid[fighter.location.x][fighter.location.y] = .empty
             grid[fighter.location.x][fighter.location.y + 1] = .fighter
-            fighter.location.y++
-            case "down":
-                grid[fighter.location.x][fighter.location.y] = .empty
-                grid[fighter.location.x][fighter.location.y - 1] = .fighter
-            fighter.location.y--
-            case "left":
-                grid[fighter.location.x][fighter.location.y] = .empty
-                grid[fighter.location.x - 1][fighter.location.y] = .fighter
-            fighter.location.x--
-            case "right":
-                grid[fighter.location.x][fighter.location.y] = .empty
-                grid[fighter.location.x + 1][fighter.location.y] = .fighter
-            fighter.location.x++
+            fighter.location.y += 1
+        case "down":
+            grid[fighter.location.x][fighter.location.y] = .empty
+            grid[fighter.location.x][fighter.location.y - 1] = .fighter
+            fighter.location.y -= 1
+        case "left":
+            grid[fighter.location.x][fighter.location.y] = .empty
+            grid[fighter.location.x - 1][fighter.location.y] = .fighter
+            fighter.location.x -= 1
+        case "right":
+            grid[fighter.location.x][fighter.location.y] = .empty
+            grid[fighter.location.x + 1][fighter.location.y] = .fighter
+            fighter.location.x += 1
         default:
             break
         }
@@ -62,19 +56,17 @@ class GridCoordinate: Equatable {
         self.x = x
         self.y = y
     }
-    
-    }
+}
 
 func ==(lhs: GridCoordinate, rhs: GridCoordinate) -> Bool {
     return (lhs.x == rhs.x) && (lhs.y == rhs.y)
-    
 }
 
 enum ObjectType {
     case empty, fighter, invalid, me, wall
 }
 
-func printGrid(grid: [[ObjectType]]) {
+func printGrid(_ grid: [[ObjectType]]) {
     for row in 0...(grid.count-1) {
         for column in 0...(grid.count-1) {
             let value = grid[row][column]

@@ -15,7 +15,9 @@ class Fighter: SKSpriteNode {
     var brain = Network()
     var id = Int()
     var moveType = "continue" //stop, rebound, or continue
-    var lastFourPositions = [GridCoordinate?](count: 4, repeatedValue: nil)
+    var lastFourPositions = [GridCoordinate?](repeating: nil, count: 4)
+    let radius = 2 //only even numbers
+    var dead = false
     
     func moveUp() {
         if location.y < gameGrid.rows-1 {
@@ -70,7 +72,7 @@ class Fighter: SKSpriteNode {
     }
     
     func updatePosition() {
-        self.position = CGPointMake(gameGrid.cellSize.width * CGFloat(location.x), gameGrid.cellSize.height * CGFloat(location.y))
+        self.position = CGPoint(x: gameGrid.cellSize.width * CGFloat(location.x), y: gameGrid.cellSize.height * CGFloat(location.y))
         //for use in determining if stagnant
         lastFourPositions[3] = lastFourPositions[2]
         lastFourPositions[2] = lastFourPositions[1]
@@ -90,37 +92,50 @@ class Fighter: SKSpriteNode {
         return bool
     }
     
+//    func getSurroundings() -> [[ObjectType]] {
+//        var array = [[ObjectType]](count: radius*2 + 1, repeatedValue: [ObjectType](count: radius*2 + 1, repeatedValue: ObjectType.empty))
+//        //let arrStart = GridCoordinate(x: location.x - radius, y: location.y - radius)
+//        for column in 0...(radius*2) {
+//            for row in 0...(radius*2) {
+//                let checkLoc = GridCoordinate(x: (location.x - radius) + column, y: (location.y - radius) + row)
+//                if (checkLoc.x >= 0) && (checkLoc.y >= 0) && (checkLoc.x <= (gameGrid.rows - 1)) && (checkLoc.y <= (gameGrid.columns - 1)) {
+//                    if gameGrid.grid[checkLoc.x][checkLoc.y] == ObjectType.fighter {
+//                        array[column][row] = ObjectType.fighter
+//                    }
+//                } else {
+//                    array[column][row] = ObjectType.invalid
+//                }
+//            }
+//        }
+//        array[radius][radius] = ObjectType.me
+//        return array
+//    }
+    
     func getSurroundings() -> [[ObjectType]] {
-        let radius = 2 //only even numbers
-        var array = [[ObjectType]](count: radius*2 + 1, repeatedValue: [ObjectType](count: radius*2 + 1, repeatedValue: ObjectType.empty))
-        //let arrStart = GridCoordinate(x: location.x - radius, y: location.y - radius)
-        for column in 0...(radius*2) {
-            for row in 0...(radius*2) {
-                let checkLoc = GridCoordinate(x: (location.x - radius) + row, y: (location.y - radius) + column)
-                if checkLoc.x >= 0 && checkLoc.y >= 0 && checkLoc.x <= (gameGrid.rows - 1) && checkLoc.y <= (gameGrid.columns - 1) {
-                    if gameGrid.grid[checkLoc.x][checkLoc.y] == ObjectType.fighter {
-                        array[column][row] = ObjectType.fighter
-                    }
-                } else {
-                    array[column][row] = ObjectType.invalid
+        var surroundings = [[ObjectType]](repeating: [ObjectType](repeating: ObjectType.empty, count: radius*2 + 1), count: radius*2 + 1)
+        let origin = GridCoordinate(x: location.x - radius, y: location.y + radius)
+        for row in 0...(radius*2) {
+            for column in 0...(radius*2) {
+                if ((origin.y + row) > 0) && ((origin.y + row) < gameGrid.rows-1) && ((origin.x + column) > 0) && ((origin.x + column) < gameGrid.columns-1) {
+                surroundings[row][column] = gameGrid.grid[origin.y + row][origin.x + column]
                 }
             }
         }
-        array[radius][radius] = ObjectType.me
-        return array
+        return surroundings
     }
     
     convenience init() {
         let color = NSColor(red: CGFloat(Double(arc4random()) / 0xFFFFFFFF), green: CGFloat(Double(arc4random()) / 0xFFFFFFFF), blue: CGFloat(Double(arc4random()) / 0xFFFFFFFF), alpha: 1)
         self.init(texture: nil, color: color, size: gameGrid.cellSize)
-        
+        self.id = Int(arc4random_uniform(1000))
         self.location = GridCoordinate(x: Int(arc4random_uniform(UInt32(gameGrid.columns-1))), y: Int(arc4random_uniform(UInt32(gameGrid.rows-1))))
-        self.anchorPoint = CGPointZero
+        self.anchorPoint = CGPoint.zero
         updatePosition()
         self.name = "fighter"
         self.brain = Network(imput: getSurroundings())
         self.id = Int(arc4random_uniform(1000))
     }
+    
     override init(texture: SKTexture?, color: NSColor, size: CGSize) {
         super.init(texture: texture, color: color, size: size)
     }
@@ -130,8 +145,9 @@ class Fighter: SKSpriteNode {
         let color = SKColor(red: CGFloat(Double(arc4random()) / 0xFFFFFFFF), green: CGFloat(Double(arc4random()) / 0xFFFFFFFF), blue: CGFloat(Double(arc4random()) / 0xFFFFFFFF), alpha: 1)
         let texture:SKTexture? = nil
         self.init(texture: texture, color: color, size: gameGrid.cellSize)
+        self.id = Int(arc4random_uniform(1000))
         self.location = GridCoordinate(x: Int(arc4random_uniform(UInt32(gameGrid.columns-1))), y: Int(arc4random_uniform(UInt32(gameGrid.rows-1))))
-        self.anchorPoint = CGPointZero
+        self.anchorPoint = CGPoint.zero
         updatePosition()
         self.name = "fighter"
         self.brain = Network(net1: fighter1.brain, net2: fighter2.brain)

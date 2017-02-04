@@ -8,10 +8,10 @@
 
 import SpriteKit
 
-var gameGrid = Grid(columns: 50, rows: 50)
+var gameGrid = Grid(columns: 10, rows: 10)
 
 class GameScene: SKScene {
-    let numFighters = 50
+    let numFighters = 2 //cannot be 1
     var toggleTick = true
     let tickInterval = 0.1
     let numTicks = 80
@@ -20,32 +20,44 @@ class GameScene: SKScene {
     var generation = 1
     var fighters = [Fighter]()
     let killBonus = 50
-    let pointsEveryTick = false //if fighter moveType != "continue" this should be false
+    let pointsEveryTick = true //if fighter moveType != "continue" this should be false
     var topFitnessLabel = SKLabelNode(text: "Top Fitness: 0")
     var topFitness = 0
     var selectedFighter = Fighter()
+    var tickText = SKLabelNode(text: "tick")
+    let drawgrid = true
+    let numberCells = false //for debugging
+    var gridLines = [SKShapeNode]()
     
-    override func didMoveToView(view: SKView) {
+    override func didMove(to view: SKView) {
+        backgroundColor = NSColor.black
         drawGrid()
         genText.text = "Generation \(generation)"
         genText.fontSize = 22
-        genText.position = CGPointMake(self.frame.midX - 75, self.frame.maxY - 50)
+        genText.position = CGPoint(x: self.frame.midX - 75, y: self.frame.maxY - 50)
         topFitnessLabel.text = "Top Fitness: \(topFitness)"
         topFitnessLabel.fontSize = 22
-        topFitnessLabel.position = CGPointMake(self.frame.midX + 70, self.frame.maxY - 50)
+        topFitnessLabel.position = CGPoint(x: self.frame.midX + 70, y: self.frame.maxY - 50)
+        tickText.text = "tick: \(tickCount)"
+        tickText.horizontalAlignmentMode = .left
+        tickText.position = CGPoint(x: self.frame.minX, y: self.frame.minY)
         self.addChild(genText)
         self.addChild(topFitnessLabel)
+        self.addChild(tickText)
         spawnFighters()
         tick()
     }
     
-    override func mouseDown(theEvent: NSEvent) {
-        self.enumerateChildNodesWithName("fighter", usingBlock: { (node, stop) in
+    override func mouseDown(with theEvent: NSEvent) {
+        let location = theEvent.location(in: self)
+        print("Grid Coordinate: (\(Int(floor(location.x/gameGrid.cellSize.width))), \(Int(floor(location.y/gameGrid.cellSize.height))))")
+        
+        self.enumerateChildNodes(withName: "fighter", using: { (node, stop) in
             if let fighter = node as? Fighter {
-                if fighter.containsPoint(theEvent.locationInNode(self)) {
-                    print(fighter.isStagnant())
-                    let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate
+                if fighter.contains(location) {
+                    let appDelegate = NSApplication.shared().delegate as! AppDelegate
                     self.selectedFighter = fighter
+                    fighter.texture = SKTexture(imageNamed: "Star")
                     if appDelegate.secondaryWindow == nil { // dont open window if there is already one
                         appDelegate.launchFighterAdvancedView(fighter)
                     } else {
@@ -56,13 +68,17 @@ class GameScene: SKScene {
         })
     }
     
-    override func update(currentTime: CFTimeInterval) {
-        
+    func fighterAt(_ location: GridCoordinate) -> Fighter? {
+        for fighter in fighters {
+            if fighter.location == location {
+                return fighter
+            }
+        }
+        return nil
     }
     
-    override func keyDown(theEvent: NSEvent) {
-        let fighter = self.childNodeWithName("fighter") as! Fighter
-        //print(theEvent.keyCode)
+    override func keyDown(with theEvent: NSEvent) {
+        let fighter = selectedFighter
         switch theEvent.keyCode {
         case 126: //up
             fighter.moveUp()
@@ -75,7 +91,8 @@ class GameScene: SKScene {
         case 5: //g
             printGrid(gameGrid.grid)
         case 45: //n
-            printArray(fighter.brain.inputs)
+            //printArray(fighter.brain.inputs)
+            printGrid((fighter.getSurroundings()))
         case 17: //t
             if toggleTick {
                 toggleTick = false
@@ -86,19 +103,26 @@ class GameScene: SKScene {
         case 3: //f
             print(fighters.count)
         case 9: //v
-            let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate
+            let appDelegate = NSApplication.shared().delegate as! AppDelegate
             if appDelegate.secondaryWindow != nil {
                 print(appDelegate.secondaryWindow!.frame)
                 print(appDelegate.secondaryView!.frame)
             } else {
                 print("there is no window")
             }
+        case 49: //space
+            if !toggleTick {
+                toggleTick = true
+                self.run(SKAction.wait(forDuration: tickInterval), completion: {
+                    self.toggleTick = false
+                })
+            }
         default:
             break
         }
     }
     
-    func spawnFighters(fighters: Fighter...) {
+    func spawnFighters(_ fighters: Fighter...) {
         for _ in 1...numFighters {
             var warrior = Fighter()
             if fighters.count == 2 {
@@ -110,24 +134,25 @@ class GameScene: SKScene {
         }
     }
     
-    func didKillAtPoint(coord: GridCoordinate) -> Bool {
+    func didKillAtPoint(_ coord: GridCoordinate) -> Bool {
         var bool = false
-        self.enumerateChildNodesWithName("fighter") {
+        self.enumerateChildNodes(withName: "fighter") {
             node, stop in
             let fighter = node as! Fighter
             if fighter.location == coord{
+                fighter.dead = true
                 self.removeFighter(fighter)
                 bool = true
-                stop.memory = true
+                stop.pointee = true
             }
         }
         return bool
     }
     
-    func removeFighter(fighter: Fighter) {
+    func removeFighter(_ fighter: Fighter) {
         for index in 0...fighters.count-1 {
             if fighters[index] == fighter {
-                //fighters.removeAtIndex(index)
+                fighters.remove(at: index)
                 fighter.removeFromParent()
                 break
             }
@@ -136,14 +161,14 @@ class GameScene: SKScene {
     
     func tick() {
         if toggleTick && (tickCount <= numTicks) && (fighters.count > 2) {
-            let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate
+            let appDelegate = NSApplication.shared().delegate as! AppDelegate
             if appDelegate.secondaryView != nil {
                 //print(appDelegate.secondaryView)
                 let scene = appDelegate.secondaryView!.scene as! FighterAdvancedView
                 scene.fighter = self.selectedFighter
                 scene.update()
             }
-            self.enumerateChildNodesWithName("fighter") {
+            self.enumerateChildNodes(withName: "fighter") {
                 node, stop in
                 let fighter = node as! Fighter
                 fighter.brain.inputs = translateInputs(fighter.getSurroundings())
@@ -153,7 +178,7 @@ class GameScene: SKScene {
                     self.topFitnessLabel.text = "Top Fitness: \(self.topFitness)"
                 }
             } //think and calculate fittest
-            self.enumerateChildNodesWithName("fighter") {
+            self.enumerateChildNodes(withName: "fighter") {
                 node, stop in
                 let fighter = node as! Fighter
                 var willAwardPoints = Bool()
@@ -177,64 +202,64 @@ class GameScene: SKScene {
                 }
                 if willAwardPoints {fighter.fitness += self.killBonus}
             } //award point for kills
-            self.enumerateChildNodesWithName("fighter") {
+            self.enumerateChildNodes(withName: "fighter") {
                 node, stop in
                 let fighter = node as! Fighter
-                if self.pointsEveryTick {fighter.fitness++}
+                if self.pointsEveryTick {fighter.fitness += 1}
             } //award points every tick
         }
         var stagnant = true
-        self.enumerateChildNodesWithName("fighter") {
+        self.enumerateChildNodes(withName: "fighter") {
             node, stop in
             let fighter = node as! Fighter
             if !fighter.isStagnant() {
                 stagnant = false
-                stop.memory = true
+                stop.pointee = true
             }
         }
         if stagnant {
-            print("everyone is stagnant")
+            //print("everyone is stagnant")
         }
-            if tickCount > numTicks || stagnant {
-//                self.enumerateChildNodesWithName("fighter") {
-//                    node, stop in
-//                    let fighter = node as! Fighter
-//                    fighter.fitness += 20 //??
-//                }
-                let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate
-                if appDelegate.secondaryWindow != nil {
-                    appDelegate.secondaryWindow?.releasedWhenClosed = false
-                    appDelegate.secondaryWindow!.close()
-                    //appDelegate.secondaryView = nil
-                    appDelegate.secondaryWindow = nil
-                    print(appDelegate.secondaryWindow == nil)
-                } // close advancedView window
-                nextGeneration() //end generation
-            } else {
-                self.runAction(SKAction.waitForDuration(tickInterval), completion: {
-                    if self.toggleTick {self.tickCount++}
-                    self.tick()})
-            }
+        if tickCount > numTicks {//|| stagnant {
+            //                self.enumerateChildNodesWithName("fighter") {
+            //                    node, stop in
+            //                    let fighter = node as! Fighter
+            //                    fighter.fitness += 20 //??
+            //                }
+            let appDelegate = NSApplication.shared().delegate as! AppDelegate
+            if appDelegate.secondaryWindow != nil {
+                appDelegate.secondaryWindow!.close()
+                //appDelegate.secondaryView = nil
+                appDelegate.secondaryWindow = nil
+                print(appDelegate.secondaryWindow == nil)
+            } // close advancedView window
+            nextGeneration() //end generation
+        } else {
+            self.run(SKAction.wait(forDuration: tickInterval), completion: {
+                if self.toggleTick {self.tickCount += 1}
+                self.tickText.text = "Tick: \(self.tickCount)"
+                self.tick()})
+        }
     }
     
     func nextGeneration() {
-        fighters.sortInPlace({ $0.fitness > $1.fitness })
+        fighters.sort(by: { $0.fitness > $1.fitness })
         let chosenOnes = [fighters.first!, fighters[1]]
-        self.enumerateChildNodesWithName("fighter") {
+        self.enumerateChildNodes(withName: "fighter") {
             node, stop in
             let fighter = node as! Fighter
             self.removeFighter(fighter)
         }
         fighters.removeAll()
         spawnFighters(chosenOnes.first!, chosenOnes.last!)
-        generation++
+        generation += 1
         genText.text = "Generation \(generation)"
         tickCount = 0
         topFitness = 0
         tick()
     }
     
-    func testTick(fighter: Fighter) {
+    func testTick(_ fighter: Fighter) {
         fighter.brain.inputs = translateInputs(fighter.getSurroundings())
         fighter.brain.think()
         
@@ -255,37 +280,70 @@ class GameScene: SKScene {
         
     }
     
-    func drawGrid() {
-        
-        gameGrid.cellSize = CGSizeMake(floor((self.view!.frame.maxX / CGFloat(gameGrid.columns))), floor((self.view!.frame.maxY / CGFloat(gameGrid.rows))))
-        
-        for column in 0...(gameGrid.columns) {
-            let pathToDraw = CGPathCreateMutable()
-            let line = SKShapeNode(path:pathToDraw)
-            let xlocation = CGFloat((column) * (Int(self.view!.frame.maxX) / gameGrid.columns))
-            CGPathMoveToPoint(pathToDraw, nil, xlocation, self.view!.frame.minY)
-            CGPathAddLineToPoint(pathToDraw, nil, xlocation, gameGrid.cellSize.height * CGFloat(gameGrid.rows))
-            
-            line.path = pathToDraw
-            line.strokeColor = SKColor.grayColor()
-            line.lineWidth = 0.25
-            line.antialiased = false
-            self.addChild(line)
+    override func didChangeSize(_ oldSize: CGSize) {
+        if self.size != oldSize {
+            for line in gridLines {
+                line.removeFromParent()
+            }
+            drawGrid()
+            for fighter in fighters {
+                fighter.size = gameGrid.cellSize
+                fighter.position = CGPoint(x: gameGrid.cellSize.width * CGFloat(fighter.location.x), y: gameGrid.cellSize.height * CGFloat(fighter.location.y))
+            }
         }
-        
-        for row in 0...(gameGrid.rows) {
-            let pathToDraw = CGPathCreateMutable()
-            let line = SKShapeNode(path:pathToDraw)
+    }
+    
+    func drawGrid() {
+        if self.view != nil {
+            gameGrid.cellSize = CGSize(width: floor((self.view!.frame.maxX / CGFloat(gameGrid.columns))), height: floor((self.view!.frame.maxY / CGFloat(gameGrid.rows))))
+            if drawgrid {
+                for column in 0...(gameGrid.columns) {
+                    let pathToDraw = CGMutablePath()
+                    let line = SKShapeNode(path:pathToDraw)
+                    let xlocation = CGFloat((column) * (Int(self.view!.frame.maxX) / gameGrid.columns))
+                    pathToDraw.move(to: CGPoint(x: xlocation, y: self.view!.frame.minY))
+                    pathToDraw.addLine(to: CGPoint(x: xlocation, y: gameGrid.cellSize.height * CGFloat(gameGrid.rows)))
+                    
+                    line.path = pathToDraw
+                    line.strokeColor = SKColor.gray
+                    //line.lineWidth = 0.8
+                    line.isAntialiased = false
+                    self.addChild(line)
+                    gridLines.append(line)
+                }
+                
+                for row in 0...(gameGrid.rows) {
+                    let pathToDraw = CGMutablePath()
+                    let line = SKShapeNode(path:pathToDraw)
+                    
+                    let ylocation = CGFloat((row) * (Int(self.view!.frame.maxY) / gameGrid.rows))
+                    pathToDraw.move(to: CGPoint(x: self.view!.frame.minX, y: ylocation))
+                    pathToDraw.addLine(to: CGPoint(x: gameGrid.cellSize.width * CGFloat(gameGrid.columns), y: ylocation))
+                    
+                    line.path = pathToDraw
+                    line.strokeColor = SKColor.gray
+                    //line.lineWidth = 0.8
+                    line.isAntialiased = false
+                    self.addChild(line)
+                    gridLines.append(line)
+                }
+            }
             
-            let ylocation = CGFloat((row) * (Int(self.view!.frame.maxY) / gameGrid.rows))
-            CGPathMoveToPoint(pathToDraw, nil, self.view!.frame.minX, ylocation)
-            CGPathAddLineToPoint(pathToDraw, nil, gameGrid.cellSize.width * CGFloat(gameGrid.columns), ylocation)
-            
-            line.path = pathToDraw
-            line.strokeColor = SKColor.grayColor()
-            line.lineWidth = 0.25
-            line.antialiased = false
-            self.addChild(line)
+            if numberCells {
+                var count = 0
+                for row in 1...gameGrid.rows {
+                    for column in 1...gameGrid.columns {
+                        count += 1
+                        let number = SKLabelNode(text: "\(count)")
+                        number.fontName = "Arial-BoldMT"
+                        number.fontSize = 12
+                        number.verticalAlignmentMode = SKLabelVerticalAlignmentMode.top
+                        number.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.right
+                        number.position = CGPoint(x: CGFloat(column) * gameGrid.cellSize.width, y: CGFloat(row) * gameGrid.cellSize.height)
+                        self.addChild(number)
+                    }
+                }
+            }
         }
     }
 }

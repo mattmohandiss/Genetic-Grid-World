@@ -29,7 +29,7 @@ class Network {
                 let mod = (Double(arc4random()) / (0xFFFFFFFF/3)) - (0xFFFFFFFF/6)
                 //print(mod)
                 if arc4random_uniform(10) == 0 {
-                //self.hiddenNodes.nodes[nodeIndex].weights[weightIndex] += mod
+                    //self.hiddenNodes.nodes[nodeIndex].weights[weightIndex] += mod
                     //print("mutation occured")
                 }
             }
@@ -44,12 +44,12 @@ class Network {
     }
     
     init() {
-        inputs = [Int](count: 24, repeatedValue: 0)
+        inputs = [Int](repeating: 0, count: 24)
         self.hiddenNodes = Layer(numNodes: 15, inputsPernode: inputs.count)
         self.outputs = Layer(numNodes: 5, inputsPernode: hiddenNodes.numNodes)
     }
     
-    func step (x: Double)-> Bool {
+    func step (_ x: Double)-> Bool {
         if x >= 1 {
             return true
         } else {
@@ -63,8 +63,8 @@ class Network {
             for index in 0...inputs.count-1 {
                 array.append(Double(self.inputs[index]) * node.weights[index])
             }
-        node.output = average(array)
-             //println(array) It's a printer
+            node.output = average(array)
+            //println(array) It's a printer
         }
         
         for node in outputs.nodes {
@@ -85,7 +85,7 @@ class Network {
             //print("[\(node.output)]")
         }
         
-        array.sortInPlace(>)
+        array.sort(by: >)
         if outputs.nodes.first?.output == array.first { //up
             nextMove = 1
         } else if outputs.nodes[1].output == array.first { //down
@@ -107,7 +107,7 @@ class Node {
     
     var output = Double()
     
-    func setOutput(val: Double) {
+    func setOutput(_ val: Double) {
         self.output = val
     }
     
@@ -131,7 +131,7 @@ class Layer {
     }
 }
 
-func average(imput: [Double])->Double {
+func average(_ imput: [Double])->Double {
     var val = 0.0
     for value in imput {
         val += value
@@ -139,7 +139,7 @@ func average(imput: [Double])->Double {
     return val/Double(imput.count)
 }
 
-func printArray(array: [Int]?) {
+func printArray(_ array: [Int]?) {
     if array != nil {
         for value in array! {
             print("[\(value)] ", terminator: "")
@@ -150,13 +150,13 @@ func printArray(array: [Int]?) {
     }
 }
 
-func translateInputs(imput: [[ObjectType]])->[Int] {
+func translateInputs(_ imput: [[ObjectType]])->[Int] {
     var array = [Int]()
     for column in 0...imput.first!.count-1 {
         for row in 0...imput.count-1 {
             array.append(imput[column][row].hashValue)
         }
     }
-    array.removeAtIndex(12) //assuming radius of 2
+    array.remove(at: 12) //assuming radius of 2
     return array //store result of translation
 }
